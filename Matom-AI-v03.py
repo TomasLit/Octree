@@ -52,7 +52,7 @@ distZ = maxZ - minZ
 print("The distances between most and least distant points to the starting point of the coordinates were found (X, Y, Z):", round(distX, 2), ",", round(distY, 2), ",", round(distZ, 2))
 
 # To create a sphere inside Octree cuboid we need to know the shortest axis. Calculating the shortest axis.
-def minXYZ():
+def minXYZa():
     global min
     if distX <= distY:
         if distX <= distZ:
@@ -61,14 +61,13 @@ def minXYZ():
         else: 
             min = distZ
             return min
+    elif distY <= distZ:
+        min = distY
+        return min
     else:
-        if distY <= distZ:
-            min = distY
-            return min
-        else:
-            min = distZ
-            return min
-minXYZ()
+        min = distZ
+        return min
+minXYZa()
 print("The shortest axis of the future Octree cuboid was found and is equal to", round(min, 2))
 
 # Creating new list where the program will write the coordinates of the centers of cuboids / spheres. 
@@ -87,24 +86,22 @@ def finding_centers():
     global center_y
     global center_z
     while center_x < maxX:
-        while center_y < maxY:
-            while center_z < maxZ:
+        if center_y < maxY:
+            if center_z < maxZ:
                 center.append((center_x, center_y, center_z))
                 center_z = center_z + (distZ / 4)
-            else:
-                if center_y < maxY:
-                    center_z = minZ + (distZ / 8)
-                    center_y = center_y + (distY / 4)
-        else:
-            if center_x < maxX:
+            elif center_y < maxY:
                 center_z = minZ + (distZ / 8)
-                center_y = minY + (distY / 8)
-                center_x = center_x + (distX / 4)
+                center_y = center_y + (distY / 4)
+        elif center_x < maxX:
+            center_z = minZ + (distZ / 8)
+            center_y = minY + (distY / 8)
+            center_x = center_x + (distX / 4)
     else:
         return center
 finding_centers()
 
-print("Centers of the Octree cuboids were found. The total number of cuboids:", len(center), " Time taken for the operation:", " %s seconds " % round(time.time() - start_time4, 3))
+print("Centers of the Octree cuboids were found. The total number of cuboids:", len(center), " Time taken for the operation:", " %s seconds " % round(time.time() - start_time4, 3), "\n")
 
 # Creating new empty list were coordinates of the points would be stored divided into octree cuboids.
 octree = [[] for _ in range(len(center))]
@@ -121,20 +118,18 @@ rz = distZ / 8
 def octree_cuboids():
     i = 0
     a = 0
-    v = 0
     while a in range (len(center)):
             print("Checking the points in cuboid No.", a+1)
             while i in range(len(output_X)):
-                while output_X[i] >= (center[a][0]-rx) and output_X[i] <= (center[a][0]+rx) and output_Y[i] >= (center[a][1]-ry) and output_Y[i] <= (center[a][1]+ry) and output_Z[i] >= (center[a][2]-rz) and output_Z[i] <= (center[a][2]+rz) and v==0:
+                if output_X[i] >= (center[a][0]-rx) and output_X[i] <= (center[a][0]+rx) and output_Y[i] >= (center[a][1]-ry) and output_Y[i] <= (center[a][1]+ry) and output_Z[i] >= (center[a][2]-rz) and output_Z[i] <= (center[a][2]+rz):
                     octree[a].append(((output_X[i], output_Y[i], output_Z[i])))
-                    v = 1
+                    i += 1
                 else: 
                     i += 1
-                    v = 0
             else:
                 i = 0
                 a += 1
-    print("The operation finished in", " %s seconds " % round(time.time() - start_time5, 3))
+    print("The operation finished in", " %s seconds " % round(time.time() - start_time5, 3), "\n")
     print("Starting the operation which will find what points belong to spheres.")
     start_time6 = time.time()
 
@@ -147,22 +142,20 @@ def octree_cuboids():
     results_z = []
     i = 0
     a = 0
-    v = 0
     while a in range (len(octree)):
             print("Checking the points in sphere No.", a+1)
             while i in range(len(octree[a])):
-                while (((octree[a][i][0]-center[a][0])**2 + (octree[a][i][1]-center[a][1])**2 + (octree[a][i][2]-center[a][2])**2) < ((min/8)**2)) and v == 0:
+                if (((octree[a][i][0]-center[a][0])**2 + (octree[a][i][1]-center[a][1])**2 + (octree[a][i][2]-center[a][2])**2) <= ((min/8)**2)): 
                     results_x.append(octree[a][i][0])
                     results_y.append(octree[a][i][1])
                     results_z.append(octree[a][i][2])
-                    v = 1
+                    i += 1
                 else: 
                     i += 1
-                    v = 0
             else:
                 i = 0
                 a += 1
-    print("The operation finished in", " %s seconds " % round(time.time() - start_time6, 3))
+    print("The operation finished in", " %s seconds " % round(time.time() - start_time6, 3), "\n")
     return results_x, results_y, results_z
 octree_cuboids()
 
@@ -177,7 +170,7 @@ print("Converting results to numpy array in", " %s seconds " % round(time.time()
 
 start_time8 = time.time()
 
-# Creating new .las file and 
+# Creating new .las file 
 my_data_xx = np.array(results_array_x)
 my_data_yy = np.array(results_array_y)
 my_data_zz = np.array(results_array_z)
@@ -196,10 +189,9 @@ las.x = my_data[:, 0]
 las.y = my_data[:, 1]
 las.z = my_data[:, 2]
 
-las.write("output.las")
-
-las = laspy.read('output.las')
+las.write("output2.las")
 
 print("New .las file created in", " %s seconds " % round(time.time() - start_time8, 3))
-
 print("The whole program has finished in", " %s seconds " % round(time.time() - start_time, 3))
+print("If you want to see visualization of the results please run Matom-AI_visualization.ipynb file")
+input("Press enter to exit!")
