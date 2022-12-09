@@ -1,7 +1,7 @@
-"""Your task is to implement a modified Octree algorithm. The algorithm should construct a standard Octree, but we want you to embed a sphere in each of the Octree cubes. 
+"""
+Your task is to implement a modified Octree algorithm. The algorithm should construct a standard Octree, but we want you to embed a sphere in each of the Octree cubes. 
 All the points within a sphere should further be subdivided into eight cubes (with spheres inside). All the points that are outside of the sphere can be discarded. Visualize the results.
-The data is provided in las format. You can find a sample las file here:
-https://drive.google.com/file/d/1LgWT31UbIbYiZAT4_v_PoDKKQg5P7Mua/view?usp=sharing"""
+"""
 
 import numpy as np
 import laspy
@@ -189,7 +189,7 @@ las.x = my_data[:, 0]
 las.y = my_data[:, 1]
 las.z = my_data[:, 2]
 
-las.write("output2.las")
+las.write("output.las")
 
 print("New .las file created in", " %s seconds " % round(time.time() - start_time8, 3))
 print("The whole program has finished in", " %s seconds " % round(time.time() - start_time, 3))
