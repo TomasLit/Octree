@@ -21,9 +21,9 @@ start_time = time.time()
 print("The program has started!")
 
 # Reading a .las file.
+las_file =input(str('Please write the name of the file you want to open (without extention): '))
+las = laspy.read(las_file + '.las')
 print("Starting to read the .las file")
-# If you want a .las format file to open, you have to write the name of the file below.
-las = laspy.read('XXX.las')
 coordinates = np.stack((las.x, las.y, las.z)).transpose()
 print("Finished reading .las file in", " %s seconds " % round(time.time() - start_time, 3))
 start_time2 = time.time()
