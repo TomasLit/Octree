@@ -1,5 +1,5 @@
 """
-The task is to implement a modified Octree algorithm. The algorithm should construct a standard Octree two times. Meaning at first it should divide the X, Y, Z field into 8 cubes and then again divide
+The task of the program is to implement a modified Octree algorithm. The algorithm should construct a standard Octree two times. Meaning at first it should divide the X, Y, Z field into 8 cubes and then again divide
 those cubes into even smaller 8 cubes. Meaning 64 small cubes in the end. A sphere should be embedded into each of those 64 cubes. All the points that are outside of the sphere should be discarded. 
 The final result should be visualized.
 
